@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lobby</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <h1>Lobby</h1>
+
+    <h2>Room: {{ room }}</h2>
+
+    <h3>Welcome {{ name }}</h3>
+
+    <h3>Players:</h3>
+
+    {% for p in players %}
+        <p>{{ p }}</p>
+    {% endfor %}
+
+    <button onclick="window.location.href='/'">
+        Back
+    </button>
+
+</div>
+
+</body>
+</html>

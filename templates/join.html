@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Join</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <h1>Join Lobby</h1>
+
+    <form method="POST">
+
+        <input name="name" placeholder="Your Name">
+        <input name="room" placeholder="Room Code">
+
+        <button type="submit">Join</button>
+
+    </form>
+
+    <!-- BACK TO MENU -->
+    <button onclick="window.location.href='/'">
+        Back to Menu
+    </button>
+
+</div>
+
+</body>
+</html>

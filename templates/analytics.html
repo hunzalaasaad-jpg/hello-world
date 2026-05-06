@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <h1>Quiz Analytics</h1>
+
+    <h3>Top Players</h3>
+
+    {% for p in leaderboard %}
+        <p>{{ p.name }} - {{ p.score }}</p>
+    {% endfor %}
+
+    <h3>Summary</h3>
+
+    <p>Total Players: {{ total }}</p>
+
+</div>
+
+</body>
+
+</html>

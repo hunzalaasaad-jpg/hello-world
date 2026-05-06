@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Host</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <h1>Host Dashboard</h1>
+
+    <h2>Room: {{ room }}</h2>
+
+    <p id="status">Waiting for players...</p>
+
+    <h3>Leaderboard</h3>
+    <div id="leaderboard"></div>
+
+    <button onclick="startQuiz()">Start Quiz</button>
+
+    <!-- ✅ ONLY ADDITION (BACK TO MENU) -->
+    <button onclick="window.location.href='/'">
+        Back to Menu
+    </button>
+
+</div>
+
+<script>
+
+const socket = io();
+let room = "{{ room }}";
+
+// join host
+socket.emit("join_room", {
+    name: "HOST",
+    room: room
+});
+
+// START QUIZ
+function startQuiz() {
+    document.getElementById("status").innerText = "Quiz Running";
+
+    socket.emit("start_quiz", {
+        room: room
+    });
+}
+
+// LEADERBOARD
+socket.on("leaderboard", (data) => {
+
+    data.sort((a, b) => b.score - a.score);
+
+    let html = "";
+
+    data.forEach((p, i) => {
+        html += `<p>${i + 1}. ${p.name} - ${p.score}</p>`;
+    });
+
+    document.getElementById("leaderboard").innerHTML = html;
+});
+
+// END
+socket.on("quiz_end", (data) => {
+
+    let html = "<h3>Final Results</h3>";
+
+    data.sort((a, b) => b.score - a.score);
+
+    data.forEach((p, i) => {
+        html += `<p>${i + 1}. ${p.name} - ${p.score}</p>`;
+    });
+
+    document.getElementById("leaderboard").innerHTML = html;
+});
+
+</script>
+
+</body>
+</html>

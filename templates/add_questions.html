@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <h1>Question Builder</h1>
+
+    <!-- 🔥 STATS PANEL -->
+    <div style="margin-bottom:15px; font-size:14px;">
+
+        <p>Easy Questions: {{ stats.easy }}</p>
+        <p>Moderate Questions: {{ stats.moderate }}</p>
+        <p>Hard Questions: {{ stats.hard }}</p>
+        <p>Clinical Questions: {{ stats.clinical }}</p>
+
+    </div>
+
+    <!-- QUESTION FORM -->
+    <form method="POST">
+
+        <input name="question" placeholder="Enter Question">
+
+        <input name="A" placeholder="Option A">
+        <input name="B" placeholder="Option B">
+        <input name="C" placeholder="Option C">
+        <input name="D" placeholder="Option D">
+
+        <input name="correct" placeholder="Correct (A/B/C/D)">
+        <input name="difficulty" placeholder="easy / moderate / hard / clinical">
+
+        <button type="submit">Save Question</button>
+
+    </form>
+
+    <!-- 🔥 CLEAR MEMORY BUTTON -->
+    <form method="POST">
+
+        <input type="hidden" name="clear" value="true">
+
+        <button type="submit"
+                style="background:red;color:white;margin-top:10px;">
+            Clear All Questions
+        </button>
+
+    </form>
+
+    <button onclick="window.location.href='/'">
+        Back to Menu
+    </button>
+
+</div>
+
+</body>
+
+</html>

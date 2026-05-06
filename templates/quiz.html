@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Quiz</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<div class="main-card">
+
+    <h1>Biochem Mystery</h1>
+
+    <p id="timer">20</p>
+
+    <h2 id="questionText">{{ question.question }}</h2>
+
+    <button onclick="answer('A', this)">A. {{ question.A }}</button>
+    <button onclick="answer('B', this)">B. {{ question.B }}</button>
+    <button onclick="answer('C', this)">C. {{ question.C }}</button>
+    <button onclick="answer('D', this)">D. {{ question.D }}</button>
+
+    <p id="score">Score: 0</p>
+
+</div>
+
+<script>
+
+const socket = io();
+
+let room = "{{ room }}";
+let correct = "{{ question.correct }}";
+let playerName = localStorage.getItem("playerName") || prompt("Enter name:");
+localStorage.setItem("playerName", playerName);
+
+let time = 20;
+let score = 0;
+let locked = false;
+
+// =========================
+// TIMER RESET EVERY QUESTION
+// =========================
+function startTimer() {
+
+    clearInterval(window.timerInterval);
+
+    time = 20;
+    document.getElementById("timer").innerText = time;
+
+    window.timerInterval = setInterval(() => {
+        if (time > 0) {
+            time--;
+            document.getElementById("timer").innerText = time;
+        }
+    }, 1000);
+}
+
+startTimer();
+
+// =========================
+// ANSWER FUNCTION
+// =========================
+function answer(choice, btn) {
+
+    if (locked) return;
+    locked = true;
+
+    document.querySelectorAll("button").forEach(b => b.disabled = true);
+
+    let points = 0;
+
+    if (choice === correct) {
+        btn.style.background = "green";
+
+        points =
+            time >= 15 ? 100 :
+            time >= 10 ? 70 :
+            time >= 5 ? 40 : 20;
+    } else {
+        btn.style.background = "red";
+    }
+
+    score += points;
+
+    document.getElementById("score").innerText = "Score: " + score;
+
+    socket.emit("answer_result", {
+        name: playerName,
+        room: room,
+        score: points
+    });
+}
+
+// =========================
+// NEW QUESTION FROM SERVER
+// =========================
+socket.on("new_question", (data) => {
+
+    const q = data.question;
+
+    document.getElementById("questionText").innerText = q.question;
+
+    let btns = document.querySelectorAll("button");
+
+    btns[0].innerHTML = "A. " + q.A;
+    btns[1].innerHTML = "B. " + q.B;
+    btns[2].innerHTML = "C. " + q.C;
+    btns[3].innerHTML = "D. " + q.D;
+
+    correct = q.correct;
+
+    locked = false;
+
+    btns.forEach(b => {
+        b.disabled = false;
+        b.style.background = "";
+    });
+
+    startTimer();
+});
+
+// =========================
+// QUIZ END
+// =========================
+socket.on("quiz_end", () => {
+
+    document.body.innerHTML = `
+        <div class="main-card">
+            <h1>Quiz Finished</h1>
+            <h2>Final Score: ${score}</h2>
+            <button onclick="window.location.href='/'">Home</button>
+        </div>
+    `;
+});
+
+</script>
+
+</body>
+</html>
